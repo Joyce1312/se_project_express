@@ -4,7 +4,8 @@
   "description": "A responsive React + Vite web application that recommends clothing items based on the current weather. The app dynamically displays temperature in °F/°C, filters clothing items by weather type, and lets users view, add, and delete items through interactive modals.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,12 @@
   "homepage": "https://github.com/Joyce1312/se_project_express#readme",
   "dependencies": {
     "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.10.2",
+    "eslint-plugin-import": "^2.32.0",
+    "prettier": "^2.8.8"
   }
 }
