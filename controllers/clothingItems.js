@@ -12,9 +12,10 @@ const getItems = (req, res) => {
 };
 
 const createItem = (req, res) => {
+  console.log(req.user._id);
   const { name, weather, imageUrl } = req.body;
 
-  Item.create({ name, weather, imageUrl })
+  Item.create({ name, weather, imageUrl, owner: req.user._id })
     .then((item) => {
       res.status(201).send(item);
     })
