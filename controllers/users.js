@@ -29,6 +29,7 @@ const getUser = (req, res) => {
     .orFail(() => {
       const error = new Error("Item ID not found");
       error.statusCode = 404;
+      error.name = "DocumentNotFoundError";
       throw error;
     })
     .then((user) => {
