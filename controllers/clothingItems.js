@@ -48,9 +48,9 @@ const deleteClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        res.status(NON_EXISTENT_ERROR).send({ message: err.message });
+        return res.status(NON_EXISTENT_ERROR).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
-        res.status(INVAILD_ERROR).send({ message: err.message });
+        return res.status(INVAILD_ERROR).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
@@ -76,9 +76,9 @@ const likeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        res.status(NON_EXISTENT_ERROR).send({ message: err.message });
+        return res.status(NON_EXISTENT_ERROR).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
-        res.status(INVAILD_ERROR).send({ message: err.message });
+        return res.status(INVAILD_ERROR).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
@@ -104,9 +104,9 @@ const dislikeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        res.status(NON_EXISTENT_ERROR).send({ message: err.message });
+        return res.status(NON_EXISTENT_ERROR).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
-        res.status(INVAILD_ERROR).send({ message: err.message });
+        return res.status(INVAILD_ERROR).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
