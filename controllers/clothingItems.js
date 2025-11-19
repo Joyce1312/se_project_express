@@ -17,7 +17,6 @@ const getClothingItem = (req, res) => {
 };
 
 const createClothingItem = (req, res) => {
-  console.log(req.user._id);
   const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
@@ -49,9 +48,9 @@ const deleteClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NON_EXISTENT_ERROR).send({ message: err.message });
+        res.status(NON_EXISTENT_ERROR).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
-        return res.status(INVAILD_ERROR).send({ message: err.message });
+        res.status(INVAILD_ERROR).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
@@ -76,11 +75,10 @@ const likeItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      console.log("hi" + err.name);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NON_EXISTENT_ERROR).send({ message: err.message });
+        res.status(NON_EXISTENT_ERROR).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
-        return res.status(INVAILD_ERROR).send({ message: err.message });
+        res.status(INVAILD_ERROR).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
@@ -90,7 +88,7 @@ const dislikeItem = (req, res) => {
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
@@ -105,11 +103,10 @@ const dislikeItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      console.log("hi" + err.name);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NON_EXISTENT_ERROR).send({ message: err.message });
+        res.status(NON_EXISTENT_ERROR).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
-        return res.status(INVAILD_ERROR).send({ message: err.message });
+        res.status(INVAILD_ERROR).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
