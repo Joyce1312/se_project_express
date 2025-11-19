@@ -1,4 +1,9 @@
 const User = require("../models/user");
+const {
+  INVAILD_ERROR,
+  NON_EXISTENT_ERROR,
+  DEFAULT_ERROR,
+} = require("../utils/errors");
 
 // {
 //     "name": "Test User",
@@ -14,25 +19,29 @@ const getUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
 };
 
 const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .orFail()
+    .orFail(() => {
+      const error = new Error("Item ID not found");
+      error.statusCode = 404;
+      throw error;
+    })
     .then((user) => {
       res.status(200).send(user);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NON_EXISTENT_ERROR).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(INVAILD_ERROR).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
 };
 
@@ -45,9 +54,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(INVAILD_ERROR).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(DEFAULT_ERROR).send({ message: err.message });
     });
 };
 

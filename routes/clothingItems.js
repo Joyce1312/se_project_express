@@ -1,15 +1,15 @@
 const router = require("express").Router();
 const {
-  getItems,
-  createItem,
-  deleteItem,
+  getClothingItem,
+  createClothingItem,
+  deleteClothingItem,
 } = require("../controllers/clothingItems");
 
-router.get("/", getItems);
+router.get("/", getClothingItem);
 
-router.post("/", createItem);
+router.post("/", createClothingItem);
 
-router.delete("/:itemId", deleteItem);
+router.delete("/:itemId", deleteClothingItem);
 
 router.use((req, res) => {
   res.status(404).send({ message: "Requested resource not found" });
