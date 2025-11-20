@@ -22,7 +22,7 @@ module.exports = {
   rules: {
     "no-console": ["warn", { allow: ["error"] }],
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
-    "import/newline-after-import": "off",
-    "no-else-return": "off",
+    // "import/newline-after-import": "off",
+    // "no-else-return": "off",
   },
 };
