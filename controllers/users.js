@@ -40,9 +40,9 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NON_EXISTENT_ERROR).send({ message: "Not found" });
+        res.status(NON_EXISTENT_ERROR).send({ message: "Not found" });
       } else if (err.name === "CastError") {
-        return res.status(INVAILD_ERROR).send({ message: "Casting Error" });
+        res.status(INVAILD_ERROR).send({ message: "Casting Error" });
       }
       return res
         .status(DEFAULT_ERROR)

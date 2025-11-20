@@ -53,7 +53,8 @@ const deleteClothingItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NON_EXISTENT_ERROR).send({ message: "Not found" });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(INVAILD_ERROR).send({ message: "Casting Error" });
       }
       return res
@@ -83,7 +84,8 @@ const likeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NON_EXISTENT_ERROR).send({ message: "Not found" });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(INVAILD_ERROR).send({ message: "Casting Error" });
       }
       return res
@@ -113,7 +115,8 @@ const dislikeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NON_EXISTENT_ERROR).send({ message: "Not found" });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(INVAILD_ERROR).send({ message: "Casting Error" });
       }
       return res
