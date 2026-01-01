@@ -4,6 +4,7 @@ const {
   INVAILD_ERROR,
   NON_EXISTENT_ERROR,
   DEFAULT_ERROR,
+  DUPLICATE_ERROR,
 } = require("../utils/errors");
 
 // {
@@ -55,39 +56,33 @@ const getUser = (req, res) => {
 const createUser = (req, res) => {
   console.log("Entering createUser function");
   const { name, avatar, email, password } = req.body;
-  // console.log("Request body:", req.body);
-  // console.log("Password value:", password);
   bcrypt.hash(password, 10).then((hash) => {
     User.create({ name, avatar, email, password: hash })
       .then((user) => {
-        res.status(201).send(user);
+        res.status(201).send({
+          email: user.email,
+          name: user.name,
+          avatar: user.avatar,
+        });
       })
       .catch((err) => {
         console.error(err);
-        console.log(err.name);
+        console.log("Error Name: " + err.name);
         if (err.name === "ValidationError") {
           return res
             .status(INVAILD_ERROR)
             .send({ message: "Validation error" });
+        }
+        if (err.code === 11000) {
+          return res
+            .status(DUPLICATE_ERROR)
+            .send({ message: "Email already exists" });
         }
         return res
           .status(DEFAULT_ERROR)
           .send({ message: "An error has occurred on the server" });
       });
   });
-  // User.create({ name, avatar })
-  //   .then((user) => {
-  //     res.status(201).send(user);
-  //   })
-  //   .catch((err) => {
-  //     console.error(err);
-  //     if (err.name === "ValidationError") {
-  //       return res.status(INVAILD_ERROR).send({ message: "Validation error" });
-  //     }
-  //     return res
-  //       .status(DEFAULT_ERROR)
-  //       .send({ message: "An error has occurred on the server" });
-  //   });
 };
 
 module.exports = { getUsers, getUser, createUser };
