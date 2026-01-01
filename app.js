@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
+const { createUser } = require("./controllers/users");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -12,6 +13,8 @@ mongoose
 
 app.use(express.json());
 
+app.post("/signup", createUser);
+
 app.use((req, res, next) => {
   req.user = {
     _id: "691ca576600a5e8324ca9793",
@@ -22,5 +25,5 @@ app.use((req, res, next) => {
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {
-  // console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

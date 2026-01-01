@@ -18,6 +18,23 @@ const userSchema = new mongoose.Schema({
       message: "You must enter a valid URL",
     },
   },
+  email: {
+    required: [true, "The email field is required"],
+    type: String,
+    unique: true,
+    validate: {
+      validator(value) {
+        return validator.isEmail(value);
+      },
+      message: "You must enter a valid email",
+    },
+  },
+  password: {
+    required: [true, "The password field is required"],
+    type: String,
+    minlength: 8,
+    select: false,
+  },
 });
 
 module.exports = mongoose.model("user", userSchema);

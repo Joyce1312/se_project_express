@@ -53,7 +53,10 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
+  console.log("Entering createUser function");
   const { name, avatar, email, password } = req.body;
+  // console.log("Request body:", req.body);
+  // console.log("Password value:", password);
   bcrypt.hash(password, 10).then((hash) => {
     User.create({ name, avatar, email, password: hash })
       .then((user) => {
@@ -61,6 +64,7 @@ const createUser = (req, res) => {
       })
       .catch((err) => {
         console.error(err);
+        console.log(err.name);
         if (err.name === "ValidationError") {
           return res
             .status(INVAILD_ERROR)
