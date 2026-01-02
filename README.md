@@ -11,9 +11,16 @@ The primary goals of this stage are to:
 
 - Set up a maintainable Express server with proper project structure
 - Create and connect a MongoDB database using Mongoose
-- Implement initial routes and controllers for users and clothing items
+- Implement authentication and authorization using JWT
+- Protect routes and user-owned resources
 - Return consistent JSON error responses with appropriate status codes
-- Introduce a temporary authorization middleware to associate created items with a test user
+- Prepare the backend for secure frontend integration
+
+---
+
+## Project Pitch Video
+
+Check out [this video](https://drive.google.com/file/d/1o5AX2qeSVEDHHDR5Fna4BoMpqTvJpDC6/view?usp=sharing), where I describe my project.
 
 ---
 
@@ -24,18 +31,32 @@ The primary goals of this stage are to:
 - ✅ **Mongoose models** for:
   - `User` (name, avatar)
   - `ClothingItem` (name, weather, imageUrl, owner, likes, createdAt)
+- ✅ **Password hashing** using `bcryptjs`
+- ✅ **JWT-based authentication** (7-day expiration)
+- ✅ **Authorization middleware** protecting private routes
+- ✅ **Public routes**:
+  - `POST /signup`
+  - `POST /signin`
+  - `GET /items`
+- ✅ **Protected routes** requiring a valid JWT
+- ✅ **User routes**:
+  - `GET /users/me` – get current user
+  - `PATCH /users/me` – update name and avatar
+- ✅ **Ownership checks** preventing users from deleting others’ items
 - ✅ **URL validation** for avatar and image URLs using `validator`
 - ✅ **RESTful routes**:
-  - `GET /users`, `GET /users/:userId`, `POST /users`
-  - `GET /items`, `POST /items`, `DELETE /items/:itemId`
+  - `POST /items`, `DELETE /items/:itemId`
   - `PUT /items/:itemId/likes`, `DELETE /items/:itemId/likes`
-- ✅ **Temporary auth middleware** that attaches a hardcoded test user ID to `req.user`
 - ✅ **Centralized error handling** with:
-  - `400` – invalid data / invalid ID format
-  - `404` – resource not found (user, item, or route)
+  - `400` – invalid data / validation errors
+  - `401` – unauthorized
+  - `403` – forbidden
+  - `404` – resource not found
+  - `409` – conflict (duplicate email)
   - `500` – default server error `"An error has occurred on the server"`
 - ✅ **ESLint + Prettier** integration using the Airbnb style guide
 - ✅ **Nodemon** hot reload via `npm run dev`
+- ✅ **CORS enabled** for frontend communication
 
 ---
 
@@ -49,6 +70,9 @@ The primary goals of this stage are to:
 - **Prettier** – code formatting (`eslint-config-prettier`)
 - **Nodemon** – hot reload during development
 - **Postman** – manual API testing
+- **JWT (jsonwebtoken)** – authentication
+- **bcryptjs** – password hashing
+- **cors** – cross-origin requests
 
 ---
 
@@ -67,4 +91,4 @@ This API is designed to work with the front-end Weather Wardrobe app:
 - **Frontend Repo (React)**: `se_project_react`
 - **Live Demo**: [Weather Wardrobe on GitHub Pages](https://joyce1312.github.io/se_project_react/)
 
-The frontend fetches clothing items and user data and will later use this API for full CRUD operations and authorization.
+The frontend will connect to this API for authenticated user actions, protected routes, and full CRUD operations.

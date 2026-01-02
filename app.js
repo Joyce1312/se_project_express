@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const mainRouter = require("./routes/index");
 const { createUser, login } = require("./controllers/users");
 const verifyToken = require("./middlewares/auth");
@@ -12,17 +13,12 @@ mongoose
   .then(() => {})
   .catch(console.error);
 
+app.use(cors());
+
 app.use(express.json());
 
 app.post("/signin", login);
 app.post("/signup", createUser);
-
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "691ca576600a5e8324ca9793",
-//   };
-//   next();
-// });
 
 app.use("/", verifyToken, mainRouter);
 
