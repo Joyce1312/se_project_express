@@ -117,4 +117,37 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getCurrentUser, createUser, login };
+const updateUserInfo = (req, res) => {
+  const userId = req.user._id;
+  const { name, avatar } = req.body;
+
+  User.findByIdAndUpdate(
+    userId,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(NON_EXISTENT_ERROR)
+          .send({ message: "User not found" });
+      }
+      res.status(200).json(user);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(INVAILD_ERROR).send({ message: "Validation error" });
+      }
+      return res
+        .status(DEFAULT_ERROR)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
+
+module.exports = {
+  getUsers,
+  getCurrentUser,
+  createUser,
+  login,
+  updateUserInfo,
+};
