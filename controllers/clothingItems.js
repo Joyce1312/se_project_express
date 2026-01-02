@@ -38,8 +38,8 @@ const createClothingItem = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
-
-  ClothingItem.findByIdAndDelete(itemId)
+  const userId = req.user._id;
+  ClothingItem.findById(itemId)
     .orFail(() => {
       const error = new Error("Item ID not found");
       error.statusCode = 404;
@@ -47,7 +47,13 @@ const deleteClothingItem = (req, res) => {
       throw error;
     })
     .then((item) => {
-      res.status(200).send(item);
+      if (item.owner.toString() !== userId) {
+        return res.status(403).send({ message: "Forbidden Error" });
+      }
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
+    .then((deletedItem) => {
+      res.status(200).send(deletedItem);
     })
     .catch((err) => {
       console.error(err);

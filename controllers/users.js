@@ -63,11 +63,8 @@ const createUser = (req, res) => {
     .then((hash) => {
       User.create({ name, avatar, email, password: hash })
         .then((user) => {
-          res.status(201).send({
-            email: user.email,
-            name: user.name,
-            avatar: user.avatar,
-          });
+          delete user._doc.password;
+          res.status(201).send(user);
         })
         .catch((err) => {
           console.error(err);
