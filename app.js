@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
 const { createUser, login } = require("./controllers/users");
+const verifyToken = require("./middlewares/auth");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -23,7 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/", mainRouter);
+app.use("/", verifyToken, mainRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
