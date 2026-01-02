@@ -17,12 +17,12 @@ app.use(express.json());
 app.post("/signin", login);
 app.post("/signup", createUser);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "691ca576600a5e8324ca9793",
-  };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: "691ca576600a5e8324ca9793",
+//   };
+//   next();
+// });
 
 app.use("/", verifyToken, mainRouter);
 
