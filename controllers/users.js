@@ -56,19 +56,21 @@ const getCurrentUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  console.log("Entering createUser function");
   const { name, avatar, email, password } = req.body;
   bcrypt
     .hash(password, 10)
     .then((hash) => {
       User.create({ name, avatar, email, password: hash })
         .then((user) => {
-          delete user._doc.password;
-          res.status(201).send(user);
+          // delete user._doc.password;
+          res.status(201).send({
+            email: user.email,
+            name: user.name,
+            avatar: user.avatar,
+          });
         })
         .catch((err) => {
           console.error(err);
-          console.log("Error Name: " + err.name);
           if (err.name === "ValidationError") {
             return res
               .status(INVAILD_ERROR)
@@ -84,16 +86,15 @@ const createUser = (req, res) => {
             .send({ message: "An error has occurred on the server" });
         });
     })
-    .catch((err) => {
-      return res
+    .catch(() =>
+      res
         .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
-    });
+        .send({ message: "An error has occurred on the server" })
+    );
 };
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  console.log("Login");
 
   if (!email || !password) {
     return res
@@ -109,9 +110,7 @@ const login = (req, res) => {
 
       res.status(200).send({ token });
     })
-    .catch((err) => {
-      return res.status(401).send({ message: "Unauthorized Access" });
-    });
+    .catch(() => res.status(401).send({ message: "Unauthorized Access" }));
 };
 
 const updateUserInfo = (req, res) => {
@@ -125,9 +124,8 @@ const updateUserInfo = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res
-          .status(NON_EXISTENT_ERROR)
-          .send({ message: "User not found" });
+        res.status(NON_EXISTENT_ERROR).send({ message: "User not found" });
+        return;
       }
       res.status(200).json(user);
     })
