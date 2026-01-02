@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const {
   INVAILD_ERROR,
@@ -6,6 +7,7 @@ const {
   DEFAULT_ERROR,
   DUPLICATE_ERROR,
 } = require("../utils/errors");
+const { JWT_SECRET } = require("../utils/config");
 
 // {
 //     "name": "Test User",
@@ -56,33 +58,63 @@ const getUser = (req, res) => {
 const createUser = (req, res) => {
   console.log("Entering createUser function");
   const { name, avatar, email, password } = req.body;
-  bcrypt.hash(password, 10).then((hash) => {
-    User.create({ name, avatar, email, password: hash })
-      .then((user) => {
-        res.status(201).send({
-          email: user.email,
-          name: user.name,
-          avatar: user.avatar,
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      User.create({ name, avatar, email, password: hash })
+        .then((user) => {
+          res.status(201).send({
+            email: user.email,
+            name: user.name,
+            avatar: user.avatar,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+          console.log("Error Name: " + err.name);
+          if (err.name === "ValidationError") {
+            return res
+              .status(INVAILD_ERROR)
+              .send({ message: "Validation error" });
+          }
+          if (err.code === 11000) {
+            return res
+              .status(DUPLICATE_ERROR)
+              .send({ message: "Email already exists" });
+          }
+          return res
+            .status(DEFAULT_ERROR)
+            .send({ message: "An error has occurred on the server" });
         });
-      })
-      .catch((err) => {
-        console.error(err);
-        console.log("Error Name: " + err.name);
-        if (err.name === "ValidationError") {
-          return res
-            .status(INVAILD_ERROR)
-            .send({ message: "Validation error" });
-        }
-        if (err.code === 11000) {
-          return res
-            .status(DUPLICATE_ERROR)
-            .send({ message: "Email already exists" });
-        }
-        return res
-          .status(DEFAULT_ERROR)
-          .send({ message: "An error has occurred on the server" });
-      });
-  });
+    })
+    .catch((err) => {
+      return res
+        .status(DEFAULT_ERROR)
+        .send({ message: "An error has occurred on the server" });
+    });
 };
 
-module.exports = { getUsers, getUser, createUser };
+const login = (req, res) => {
+  const { email, password } = req.body;
+  console.log("Login");
+
+  if (!email || !password) {
+    return res
+      .status(INVAILD_ERROR)
+      .send({ message: "Email and password are required" });
+  }
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.status(200).send({ token });
+    })
+    .catch((err) => {
+      return res.status(401).send({ message: "Unauthorized Access" });
+    });
+};
+
+module.exports = { getUsers, getUser, createUser, login };
