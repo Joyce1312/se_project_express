@@ -3,6 +3,7 @@ const {
   INVAILD_ERROR,
   NON_EXISTENT_ERROR,
   DEFAULT_ERROR,
+  FORBIDDEN_ERROR,
 } = require("../utils/errors");
 
 const getClothingItem = (req, res) => {
@@ -42,13 +43,13 @@ const deleteClothingItem = (req, res) => {
   ClothingItem.findById(itemId)
     .orFail(() => {
       const error = new Error("Item ID not found");
-      error.statusCode = 404;
+      error.statusCode = NON_EXISTENT_ERROR;
       error.name = "DocumentNotFoundError";
       throw error;
     })
     .then((item) => {
       if (item.owner.toString() !== userId) {
-        return res.status(403).send({ message: "Forbidden Error" });
+        return res.status(FORBIDDEN_ERROR).send({ message: "Forbidden Error" });
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
@@ -79,7 +80,7 @@ const likeItem = (req, res) => {
   )
     .orFail(() => {
       const error = new Error("Item ID not found");
-      error.statusCode = 404;
+      error.statusCode = NON_EXISTENT_ERROR;
       error.name = "DocumentNotFoundError";
       throw error;
     })
@@ -110,7 +111,7 @@ const dislikeItem = (req, res) => {
   )
     .orFail(() => {
       const error = new Error("Item ID not found");
-      error.statusCode = 404;
+      error.statusCode = NON_EXISTENT_ERROR;
       error.name = "DocumentNotFoundError";
       throw error;
     })

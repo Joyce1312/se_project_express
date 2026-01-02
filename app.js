@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const mainRouter = require("./routes/index");
 const { createUser, login } = require("./controllers/users");
-const verifyToken = require("./middlewares/auth");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -20,7 +19,7 @@ app.use(express.json());
 app.post("/signin", login);
 app.post("/signup", createUser);
 
-app.use("/", verifyToken, mainRouter);
+app.use("/", mainRouter);
 
 app.listen(PORT, () => {
   // console.log(`Server running on port ${PORT}`);
