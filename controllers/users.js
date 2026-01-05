@@ -16,19 +16,6 @@ const { JWT_SECRET } = require("../utils/config");
 //     "__v": 0
 // }
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.status(200).send(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
-
 const getCurrentUser = (req, res) => {
   const userId = req.user._id;
   User.findById(userId)
@@ -110,7 +97,14 @@ const login = (req, res) => {
 
       res.status(200).send({ token });
     })
-    .catch(() => res.status(401).send({ message: "Unauthorized Access" }));
+    .catch((err) => {
+      if (err.message === "Incorrect Email or Password") {
+        return res.status(401).send({ message: "Unauthorized Access" });
+      }
+      return res
+        .status(DEFAULT_ERROR)
+        .send({ message: "An error has occured on the server" });
+    });
 };
 
 const updateUserInfo = (req, res) => {
@@ -140,7 +134,6 @@ const updateUserInfo = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   getCurrentUser,
   createUser,
   login,

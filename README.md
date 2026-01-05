@@ -20,7 +20,7 @@ The primary goals of this stage are to:
 
 ## Project Pitch Video
 
-Check out [this video](https://drive.google.com/file/d/1o5AX2qeSVEDHHDR5Fna4BoMpqTvJpDC6/view?usp=sharing), where I describe my project.
+Check out [this video](https://drive.google.com/file/d/1fLUgjhiC2N9-cdQ3_Z2T7JbB4P0Dxzof/view?usp=sharing), where I describe my project.
 
 ---
 
