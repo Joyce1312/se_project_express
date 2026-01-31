@@ -9,6 +9,7 @@ const {
   validateAuthentication,
   validateUserBody,
 } = require("./middlewares/validation");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -22,13 +23,16 @@ app.use(cors());
 
 app.use(express.json());
 
+app.use(requestLogger);
+
 app.post("/signin", validateAuthentication, login);
 app.post("/signup", validateUserBody, createUser);
 
 app.use("/", mainRouter);
 
-app.use(errors());
+app.use(errorLogger);
 
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
