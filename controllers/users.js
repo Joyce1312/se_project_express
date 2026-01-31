@@ -79,9 +79,8 @@ const createUser = (req, res, next) => {
         });
     })
     .catch(
-      (err) => {
-        return next(err);
-      }
+      (err) => next(err)
+
       // res
       //   .status(DEFAULT_ERROR)
       //   .send({ message: "An error has occurred on the server" })

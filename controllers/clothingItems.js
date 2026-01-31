@@ -9,13 +9,13 @@ const getClothingItem = (req, res, next) => {
     .then((items) => {
       res.status(200).send(items);
     })
-    .catch((err) => {
-      return next(err);
+    .catch(
+      (err) => next(err)
       // console.error(err);
       // return res
       //   .status(DEFAULT_ERROR)
       //   .send({ message: "An error has occurred on the server" });
-    });
+    );
 };
 
 const createClothingItem = (req, res, next) => {
@@ -30,9 +30,9 @@ const createClothingItem = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Validation error"));
         // return res.status(INVAILD_ERROR).send({ message: "Validation error" });
-      } else {
-        return next(err);
       }
+      return next(err);
+
       // return res
       //   .status(DEFAULT_ERROR)
       //   .send({ message: "An error has occurred on the server" });
