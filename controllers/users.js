@@ -1,13 +1,12 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  INVAILD_ERROR,
-  NON_EXISTENT_ERROR,
-  DEFAULT_ERROR,
-  DUPLICATE_ERROR,
-} = require("../utils/errors");
+const { NON_EXISTENT_ERROR } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
+const BadRequestError = require("../errors/badRequestError");
+const NotFoundError = require("../errors/notFoundError");
+const ConflictError = require("../errors/conflictError");
+const UnauthorizedError = require("../errors/unauthorizedError");
 
 // {
 //     "name": "Test User",
@@ -16,12 +15,12 @@ const { JWT_SECRET } = require("../utils/config");
 //     "__v": 0
 // }
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .orFail(() => {
       const error = new Error("User ID not found");
-      error.statusCode = 404;
+      error.statusCode = NON_EXISTENT_ERROR;
       error.name = "DocumentNotFoundError";
       throw error;
     })
@@ -29,20 +28,23 @@ const getCurrentUser = (req, res) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      console.error(err);
+      // console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NON_EXISTENT_ERROR).send({ message: "Not found" });
+        return next(new NotFoundError("Not found"));
+        // return res.status(NON_EXISTENT_ERROR).send({ message: "Not found" });
       }
       if (err.name === "CastError") {
-        return res.status(INVAILD_ERROR).send({ message: "Casting Error" });
+        return next(new BadRequestError("Casting Error"));
+        // return res.status(INVAILD_ERROR).send({ message: "Casting Error" });
       }
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
+      // return res
+      //   .status(DEFAULT_ERROR)
+      //   .send({ message: "An error has occurred on the server" });
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   bcrypt
     .hash(password, 10)
@@ -57,36 +59,43 @@ const createUser = (req, res) => {
           });
         })
         .catch((err) => {
-          console.error(err);
+          // console.error(err);
           if (err.name === "ValidationError") {
-            return res
-              .status(INVAILD_ERROR)
-              .send({ message: "Validation error" });
+            return next(new BadRequestError("Validation error"));
+            // return res
+            //   .status(INVAILD_ERROR)
+            //   .send({ message: "Validation error" });
           }
           if (err.code === 11000) {
-            return res
-              .status(DUPLICATE_ERROR)
-              .send({ message: "Email already exists" });
+            return next(new ConflictError("Email already exists"));
+            // return res
+            //   .status(DUPLICATE_ERROR)
+            //   .send({ message: "Email already exists" });
           }
-          return res
-            .status(DEFAULT_ERROR)
-            .send({ message: "An error has occurred on the server" });
+          return next(err);
+          // return res
+          //   .status(DEFAULT_ERROR)
+          //   .send({ message: "An error has occurred on the server" });
         });
     })
-    .catch(() =>
-      res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" })
+    .catch(
+      (err) => {
+        return next(err);
+      }
+      // res
+      //   .status(DEFAULT_ERROR)
+      //   .send({ message: "An error has occurred on the server" })
     );
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(INVAILD_ERROR)
-      .send({ message: "Email and password are required" });
+    return next(new BadRequestError("Email and password are required"));
+    // return res
+    //   .status(INVAILD_ERROR)
+    //   .send({ message: "Email and password are required" });
   }
 
   return User.findUserByCredentials(email, password)
@@ -99,15 +108,17 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Incorrect Email or Password") {
-        return res.status(401).send({ message: "Unauthorized Access" });
+        return next(new UnauthorizedError("Unauthorized Access"));
+        // return res.status(401).send({ message: "Unauthorized Access" });
       }
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occured on the server" });
+      return next(err);
+      // return res
+      //   .status(DEFAULT_ERROR)
+      //   .send({ message: "An error has occured on the server" });
     });
 };
 
-const updateUserInfo = (req, res) => {
+const updateUserInfo = (req, res, next) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
 
@@ -118,18 +129,21 @@ const updateUserInfo = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        res.status(NON_EXISTENT_ERROR).send({ message: "User not found" });
+        next(new NotFoundError("User not found"));
+        // res.status(NON_EXISTENT_ERROR).send({ message: "User not found" });
         return;
       }
       res.status(200).json(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(INVAILD_ERROR).send({ message: "Validation error" });
+        return next(new BadRequestError("Validation error"));
+        // return res.status(INVAILD_ERROR).send({ message: "Validation error" });
       }
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
+      // return res
+      //   .status(DEFAULT_ERROR)
+      //   .send({ message: "An error has occurred on the server" });
     });
 };
 
